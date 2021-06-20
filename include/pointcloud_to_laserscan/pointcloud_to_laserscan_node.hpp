@@ -54,6 +54,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include "sensor_msgs/msg/point_cloud2.hpp"
+#include "visualization_msgs/msg/marker.hpp"
+#include "visualization_msgs/msg/marker_array.hpp"
 
 #include "pointcloud_to_laserscan/visibility_control.h"
 
@@ -81,7 +83,10 @@ private:
   std::unique_ptr<tf2_ros::Buffer> tf2_;
   std::unique_ptr<tf2_ros::TransformListener> tf2_listener_;
   message_filters::Subscriber<sensor_msgs::msg::PointCloud2> sub_;
-  std::shared_ptr<rclcpp::Publisher<sensor_msgs::msg::LaserScan>> pub_;
+  std::shared_ptr<rclcpp::Publisher<sensor_msgs::msg::LaserScan>> laserscan_pub_;
+  std::shared_ptr<rclcpp::Publisher<visualization_msgs::msg::Marker>> ray_viz_pub_;
+  std::shared_ptr<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>> pointcloud_pub_;
+  std::shared_ptr<rclcpp::Publisher<visualization_msgs::msg::MarkerArray>> stixel_viz_pub_;
   std::unique_ptr<MessageFilter> message_filter_;
 
   std::thread subscription_listener_thread_;
