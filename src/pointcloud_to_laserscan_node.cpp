@@ -138,10 +138,13 @@ PointCloudToLaserScanNode::PointCloudToLaserScanNode(const rclcpp::NodeOptions &
   inf_epsilon_ = this->declare_parameter("inf_epsilon", 1.0);
   use_inf_ = this->declare_parameter("use_inf", true);
 
-  laserscan_pub_ = this->create_publisher<sensor_msgs::msg::LaserScan>("~/output/laserscan", rclcpp::SensorDataQoS());
-  pointcloud_pub_ = this->create_publisher<PointCloud2>("~/output/pointcloud", rclcpp::SensorDataQoS());
+  laserscan_pub_ = this->create_publisher<sensor_msgs::msg::LaserScan>(
+    "~/output/laserscan", rclcpp::SensorDataQoS());
+  pointcloud_pub_ = this->create_publisher<PointCloud2>(
+    "~/output/pointcloud", rclcpp::SensorDataQoS());
   ray_viz_pub_ = this->create_publisher<visualization_msgs::msg::Marker>("~/output/ray", 1);
-  stixel_viz_pub_ = this->create_publisher<visualization_msgs::msg::MarkerArray>("~/output/stixel", 1);
+  stixel_viz_pub_ = this->create_publisher<visualization_msgs::msg::MarkerArray>(
+    "~/output/stixel", 1);
 
   using std::placeholders::_1;
   // if pointcloud target frame specified, we need to filter by transform availability
