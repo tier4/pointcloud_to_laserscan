@@ -156,16 +156,8 @@ void PointCloudToLaserScanNode::cloudCallback(
   scan_msg->range_min = range_min_;
   scan_msg->range_max = range_max_;
 
-  // build pointcloud2 output
-  sensor_msgs::msg::PointCloud2 pointcloud_output;
   const int no_data = -1;
   std::vector<int> v_pointcloud_index;
-
-  // build ray output
-  visualization_msgs::msg::Marker ray_output;
-
-  // build stixel output
-  visualization_msgs::msg::MarkerArray stixel_output;
 
   // determine amount of rays to create
   uint32_t ranges_size = std::ceil(
@@ -263,6 +255,7 @@ void PointCloudToLaserScanNode::cloudCallback(
       pcl_pointcloud.push_back(point);
     }
   }
+  sensor_msgs::msg::PointCloud2 pointcloud_output;
   pcl::toROSMsg(pcl_pointcloud, pointcloud_output);
   auto pointcloud_output_ptr
     = std::make_unique<sensor_msgs::msg::PointCloud2>(pointcloud_output);
@@ -270,6 +263,7 @@ void PointCloudToLaserScanNode::cloudCallback(
   pointcloud_pub_->publish(std::move(pointcloud_output_ptr));
 
   // ray msg
+  visualization_msgs::msg::Marker ray_output;
   ray_output.header = cloud_msg->header;
   ray_output.id = 0;
   ray_output.type = visualization_msgs::msg::Marker::LINE_LIST;
@@ -295,6 +289,7 @@ void PointCloudToLaserScanNode::cloudCallback(
   ray_viz_pub_->publish(ray_output);
 
   // stixel msg
+  visualization_msgs::msg::MarkerArray stixel_output;
   for (size_t i = 0; i < pcl_pointcloud.size(); ++i) {
     visualization_msgs::msg::Marker marker;
     marker.header = cloud_msg->header;
