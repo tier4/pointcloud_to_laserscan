@@ -61,7 +61,8 @@
 
 namespace pointcloud_to_laserscan
 {
-typedef tf2_ros::MessageFilter<sensor_msgs::msg::PointCloud2> MessageFilter;
+using sensor_msgs::msg::PointCloud2;
+using MessageFilter = tf2_ros::MessageFilter<PointCloud2>;
 
 /**
 * Class to process incoming pointclouds into laserscans.
@@ -76,16 +77,16 @@ public:
   ~PointCloudToLaserScanNode() override;
 
 private:
-  void cloudCallback(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud_msg);
+  void cloudCallback(PointCloud2::ConstSharedPtr cloud_msg);
 
   void subscriptionListenerThreadLoop();
 
   std::unique_ptr<tf2_ros::Buffer> tf2_;
   std::unique_ptr<tf2_ros::TransformListener> tf2_listener_;
-  message_filters::Subscriber<sensor_msgs::msg::PointCloud2> sub_;
+  message_filters::Subscriber<PointCloud2> sub_;
   std::shared_ptr<rclcpp::Publisher<sensor_msgs::msg::LaserScan>> laserscan_pub_;
   std::shared_ptr<rclcpp::Publisher<visualization_msgs::msg::Marker>> ray_viz_pub_;
-  std::shared_ptr<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>> pointcloud_pub_;
+  std::shared_ptr<rclcpp::Publisher<PointCloud2>> pointcloud_pub_;
   std::shared_ptr<rclcpp::Publisher<visualization_msgs::msg::MarkerArray>> stixel_viz_pub_;
   std::unique_ptr<MessageFilter> message_filter_;
 

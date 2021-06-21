@@ -77,7 +77,7 @@ PointCloudToLaserScanNode::PointCloudToLaserScanNode(const rclcpp::NodeOptions &
   use_inf_ = this->declare_parameter("use_inf", true);
 
   laserscan_pub_ = this->create_publisher<sensor_msgs::msg::LaserScan>("~/output/laserscan", rclcpp::SensorDataQoS());
-  pointcloud_pub_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("~/output/pointcloud", rclcpp::SensorDataQoS());
+  pointcloud_pub_ = this->create_publisher<PointCloud2>("~/output/pointcloud", rclcpp::SensorDataQoS());
   ray_viz_pub_ = this->create_publisher<visualization_msgs::msg::Marker>("~/output/ray", 1);
   stixel_viz_pub_ = this->create_publisher<visualization_msgs::msg::MarkerArray>("~/output/stixel", 1);
 
@@ -138,8 +138,7 @@ void PointCloudToLaserScanNode::subscriptionListenerThreadLoop()
   sub_.unsubscribe();
 }
 
-void PointCloudToLaserScanNode::cloudCallback(
-  sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud_msg)
+void PointCloudToLaserScanNode::cloudCallback(PointCloud2::ConstSharedPtr cloud_msg)
 {
   // build laserscan output
   auto scan_msg = std::make_unique<sensor_msgs::msg::LaserScan>();
@@ -175,7 +174,7 @@ void PointCloudToLaserScanNode::cloudCallback(
   // Transform cloud if necessary
   if (scan_msg->header.frame_id != cloud_msg->header.frame_id) {
     try {
-      auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
+      auto cloud = std::make_shared<PointCloud2>();
       tf2_->transform(*cloud_msg, *cloud, target_frame_, tf2::durationFromSec(tolerance_));
       cloud_msg = cloud;
     } catch (tf2::TransformException & ex) {
@@ -255,10 +254,9 @@ void PointCloudToLaserScanNode::cloudCallback(
       pcl_pointcloud.push_back(point);
     }
   }
-  sensor_msgs::msg::PointCloud2 pointcloud_output;
+  PointCloud2 pointcloud_output;
   pcl::toROSMsg(pcl_pointcloud, pointcloud_output);
-  auto pointcloud_output_ptr
-    = std::make_unique<sensor_msgs::msg::PointCloud2>(pointcloud_output);
+  auto pointcloud_output_ptr = std::make_unique<PointCloud2>(pointcloud_output);
   pointcloud_output_ptr->header = cloud_msg->header;
   pointcloud_pub_->publish(std::move(pointcloud_output_ptr));
 
