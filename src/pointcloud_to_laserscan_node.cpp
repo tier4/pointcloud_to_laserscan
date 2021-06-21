@@ -53,6 +53,68 @@
 #include "tf2_sensor_msgs/tf2_sensor_msgs.h"
 #include "tf2_ros/create_timer_ros.h"
 
+namespace
+{
+visualization_msgs::msg::Marker createRayMarker(
+  const pcl::PointCloud<pcl::PointXYZ> & pcl_pointcloud, const std_msgs::msg::Header & header)
+{
+  visualization_msgs::msg::Marker ray_output;
+  ray_output.header = header;
+  ray_output.id = 0;
+  ray_output.type = visualization_msgs::msg::Marker::LINE_LIST;
+  ray_output.action = visualization_msgs::msg::Marker::MODIFY;
+  ray_output.lifetime = rclcpp::Duration::from_seconds(0);
+  ray_output.scale.x = 0.05;
+  ray_output.color.a = 0.1;  // Don't forget to set the alpha!
+  ray_output.color.r = 1.0;
+  ray_output.color.g = 1.0;
+  ray_output.color.b = 0.0;
+  for (size_t i = 0; i < pcl_pointcloud.size(); ++i) {
+    geometry_msgs::msg::Point point;
+    point.x = 0;
+    point.y = 0;
+    point.z = 0;
+    ray_output.points.push_back(point);
+    point.x = pcl_pointcloud.at(i).x;
+    point.y = pcl_pointcloud.at(i).y;
+    point.z = pcl_pointcloud.at(i).z;
+    ray_output.points.push_back(point);
+  }
+  return ray_output;
+}
+
+visualization_msgs::msg::MarkerArray createStixelMarkerArray(
+  const pcl::PointCloud<pcl::PointXYZ> & pcl_pointcloud, const std_msgs::msg::Header & header,
+  const double min_height)
+{
+  visualization_msgs::msg::MarkerArray stixel_output;
+  for (size_t i = 0; i < pcl_pointcloud.size(); ++i) {
+    visualization_msgs::msg::Marker marker;
+    marker.header = header;
+    marker.id = i;
+    marker.type = visualization_msgs::msg::Marker::CUBE;
+    marker.action = visualization_msgs::msg::Marker::MODIFY;
+    marker.lifetime = rclcpp::Duration::from_seconds(0.2);
+    marker.color.a = 0.999;  // Don't forget to set the alpha!
+    marker.color.r = 0.8;
+    marker.color.g = 0.8;
+    marker.color.b = 0.8;
+    marker.scale.x = 0.2;
+    marker.scale.y = 0.2;
+    marker.scale.z = (pcl_pointcloud.at(i).z - min_height);
+    marker.pose.position.x = pcl_pointcloud.at(i).x;
+    marker.pose.position.y = pcl_pointcloud.at(i).y;
+    marker.pose.position.z = pcl_pointcloud.at(i).z - marker.scale.z * 0.5;
+    marker.pose.orientation.x = 0.0;
+    marker.pose.orientation.y = 0.0;
+    marker.pose.orientation.z = 0.0;
+    marker.pose.orientation.w = 1.0;
+    stixel_output.markers.push_back(marker);
+  }
+  return stixel_output;
+}
+}  // namespace
+
 namespace pointcloud_to_laserscan
 {
 
@@ -261,57 +323,10 @@ void PointCloudToLaserScanNode::cloudCallback(PointCloud2::ConstSharedPtr cloud_
   pointcloud_pub_->publish(std::move(pointcloud_output_ptr));
 
   // ray msg
-  visualization_msgs::msg::Marker ray_output;
-  ray_output.header = cloud_msg->header;
-  ray_output.id = 0;
-  ray_output.type = visualization_msgs::msg::Marker::LINE_LIST;
-  ray_output.action = visualization_msgs::msg::Marker::MODIFY;
-  ray_output.lifetime = rclcpp::Duration::from_seconds(0);
-  ray_output.scale.x = 0.05;
-  ray_output.color.a = 0.1;  // Don't forget to set the alpha!
-  ray_output.color.r = 1.0;
-  ray_output.color.g = 1.0;
-  ray_output.color.b = 0.0;
-  for (size_t i = 0; i < pcl_pointcloud.size(); ++i) {
-    geometry_msgs::msg::Point point;
-    point.x = 0;
-    point.y = 0;
-    point.z = 0;
-    ray_output.points.push_back(point);
-    point.x = pcl_pointcloud.at(i).x;
-    point.y = pcl_pointcloud.at(i).y;
-    point.z = pcl_pointcloud.at(i).z;
-    ray_output.points.push_back(point);
-  }
-
-  ray_viz_pub_->publish(ray_output);
+  ray_viz_pub_->publish(createRayMarker(pcl_pointcloud, cloud_msg->header));
 
   // stixel msg
-  visualization_msgs::msg::MarkerArray stixel_output;
-  for (size_t i = 0; i < pcl_pointcloud.size(); ++i) {
-    visualization_msgs::msg::Marker marker;
-    marker.header = cloud_msg->header;
-    marker.id = i;
-    marker.type = visualization_msgs::msg::Marker::CUBE;
-    marker.action = visualization_msgs::msg::Marker::MODIFY;
-    marker.lifetime = rclcpp::Duration::from_seconds(0.2);
-    marker.color.a = 0.999;  // Don't forget to set the alpha!
-    marker.color.r = 0.8;
-    marker.color.g = 0.8;
-    marker.color.b = 0.8;
-    marker.scale.x = 0.2;
-    marker.scale.y = 0.2;
-    marker.scale.z = (pcl_pointcloud.at(i).z - min_height_);
-    marker.pose.position.x = pcl_pointcloud.at(i).x;
-    marker.pose.position.y = pcl_pointcloud.at(i).y;
-    marker.pose.position.z = pcl_pointcloud.at(i).z - marker.scale.z * 0.5;
-    marker.pose.orientation.x = 0.0;
-    marker.pose.orientation.y = 0.0;
-    marker.pose.orientation.z = 0.0;
-    marker.pose.orientation.w = 1.0;
-    stixel_output.markers.push_back(marker);
-  }
-  stixel_viz_pub_->publish(stixel_output);
+  stixel_viz_pub_->publish(createStixelMarkerArray(pcl_pointcloud, cloud_msg->header, min_height_));
 }
 
 }  // namespace pointcloud_to_laserscan
