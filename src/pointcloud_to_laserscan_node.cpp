@@ -250,8 +250,10 @@ void PointCloudToLaserScanNode::cloudCallback(
   laserscan_pub_->publish(std::move(scan_msg));
 
   pcl::PointCloud<pcl::PointXYZ> pcl_pointcloud;
-  sensor_msgs::PointCloud2ConstIterator<float> iter_x(*cloud_msg, "x"), iter_y(*cloud_msg, "y"),
-    iter_z(*cloud_msg, "z");
+  sensor_msgs::PointCloud2ConstIterator<float> iter_x(*cloud_msg, "x");
+  sensor_msgs::PointCloud2ConstIterator<float> iter_y(*cloud_msg, "y");
+  sensor_msgs::PointCloud2ConstIterator<float> iter_z(*cloud_msg, "z");
+
   for (size_t i = 0; i < v_pointcloud_index.size(); ++i) {
     if (v_pointcloud_index.at(i) != no_data) {
       pcl::PointXYZ point;
