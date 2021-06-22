@@ -24,8 +24,13 @@ def generate_launch_description():
         ),
         Node(
             package='pointcloud_to_laserscan', executable='pointcloud_to_laserscan_node',
-            remappings=[('cloud_in', [LaunchConfiguration(variable_name='scanner'), '/cloud']),
-                        ('scan', [LaunchConfiguration(variable_name='scanner'), '/scan'])],
+            remappings=[
+                ('~/input/pointcloud', [LaunchConfiguration('scanner'), '/cloud']),
+                ('~/output/laserscan', [LaunchConfiguration('scanner'), '/scan']),
+                ('~/output/pointcloud', [LaunchConfiguration('scanner'), '/cloud_out']),
+                ('~/output/ray', [LaunchConfiguration('scanner'), '/ray']),
+                ('~/output/stixel', [LaunchConfiguration('scanner'), '/stixel'])
+            ],
             parameters=[{
                 'target_frame': 'cloud',
                 'transform_tolerance': 0.01,

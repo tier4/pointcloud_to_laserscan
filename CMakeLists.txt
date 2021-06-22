@@ -4,6 +4,12 @@ project(pointcloud_to_laserscan)
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
+find_package(PCL REQUIRED QUIET COMPONENTS common)
+
+include_directories(
+  ${PCL_COMMON_INCLUDE_DIRS}
+)
+
 ament_auto_add_library(laserscan_to_pointcloud SHARED
   src/laserscan_to_pointcloud_node.cpp)
 
@@ -13,6 +19,8 @@ rclcpp_components_register_node(laserscan_to_pointcloud
 
 ament_auto_add_library(pointcloud_to_laserscan SHARED
   src/pointcloud_to_laserscan_node.cpp)
+
+target_link_libraries(pointcloud_to_laserscan ${PCL_LIBRARIES})
 
 rclcpp_components_register_node(pointcloud_to_laserscan
   PLUGIN "pointcloud_to_laserscan::PointCloudToLaserScanNode"
