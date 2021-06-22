@@ -47,6 +47,7 @@
 #include <string>
 #include <thread>
 #include <utility>
+#include <vector>
 
 #include "pcl_conversions/pcl_conversions.h"
 #include "sensor_msgs/point_cloud2_iterator.hpp"
