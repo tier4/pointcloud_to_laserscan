@@ -3,7 +3,7 @@ name: Check spelling
 on:
   pull_request:
     branches:
-      - main
+      - tier4/main
 
 jobs:
   spellcheck:
