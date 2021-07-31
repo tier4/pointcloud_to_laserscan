@@ -298,9 +298,11 @@ void PointCloudToLaserScanNode::cloudCallback(PointCloud2::ConstSharedPtr cloud_
 
     // overwrite range at laserscan ray if new range is smaller
     int index = (angle - scan_msg->angle_min) / scan_msg->angle_increment;
-    if (range < scan_msg->ranges[index]) {
-      scan_msg->ranges[index] = range;
-      v_pointcloud_index.at(index) = pointcloud_index;
+    if (index < scan_msg->ranges.size()) {
+      if (range < scan_msg->ranges[index]) {
+        scan_msg->ranges[index] = range;
+        v_pointcloud_index.at(index) = pointcloud_index;
+      }
     }
   }
 
