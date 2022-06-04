@@ -49,7 +49,11 @@
 #include <utility>
 
 #include "sensor_msgs/point_cloud2_iterator.hpp"
-#include "tf2_sensor_msgs/tf2_sensor_msgs.h"
+#ifdef USE_TF2_SENSOR_MSGS_DEPRECATED_HEADER
+#include <tf2_sensor_msgs/tf2_sensor_msgs.h>
+#else
+#include <tf2_sensor_msgs/tf2_sensor_msgs.hpp>
+#endif
 #include "tf2_ros/create_timer_ros.h"
 
 namespace pointcloud_to_laserscan

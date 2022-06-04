@@ -10,6 +10,12 @@ include_directories(
   ${PCL_COMMON_INCLUDE_DIRS}
 )
 
+if(${tf2_sensor_msgs_VERSION} VERSION_LESS 0.18.0)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC
+    USE_TF2_SENSOR_MSGS_DEPRECATED_HEADER
+  )
+endif()
+
 ament_auto_add_library(laserscan_to_pointcloud SHARED
   src/laserscan_to_pointcloud_node.cpp)
 
