@@ -10,12 +10,6 @@ include_directories(
   ${PCL_COMMON_INCLUDE_DIRS}
 )
 
-if(${tf2_sensor_msgs_VERSION} VERSION_LESS 0.18.0)
-  target_compile_definitions(${PROJECT_NAME} PUBLIC
-    USE_TF2_SENSOR_MSGS_DEPRECATED_HEADER
-  )
-endif()
-
 ament_auto_add_library(laserscan_to_pointcloud SHARED
   src/laserscan_to_pointcloud_node.cpp)
 
@@ -27,6 +21,15 @@ ament_auto_add_library(pointcloud_to_laserscan SHARED
   src/pointcloud_to_laserscan_node.cpp)
 
 target_link_libraries(pointcloud_to_laserscan ${PCL_LIBRARIES})
+
+if(${tf2_sensor_msgs_VERSION} VERSION_LESS 0.18.0)
+  target_compile_definitions(laserscan_to_pointcloud PUBLIC
+    USE_TF2_SENSOR_MSGS_DEPRECATED_HEADER
+  )
+  target_compile_definitions(pointcloud_to_laserscan PUBLIC
+    USE_TF2_SENSOR_MSGS_DEPRECATED_HEADER
+  )
+endif()
 
 rclcpp_components_register_node(pointcloud_to_laserscan
   PLUGIN "pointcloud_to_laserscan::PointCloudToLaserScanNode"
