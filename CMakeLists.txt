@@ -22,6 +22,15 @@ ament_auto_add_library(pointcloud_to_laserscan SHARED
 
 target_link_libraries(pointcloud_to_laserscan ${PCL_LIBRARIES})
 
+if(${tf2_sensor_msgs_VERSION} VERSION_LESS 0.18.0)
+  target_compile_definitions(laserscan_to_pointcloud PUBLIC
+    USE_TF2_SENSOR_MSGS_DEPRECATED_HEADER
+  )
+  target_compile_definitions(pointcloud_to_laserscan PUBLIC
+    USE_TF2_SENSOR_MSGS_DEPRECATED_HEADER
+  )
+endif()
+
 rclcpp_components_register_node(pointcloud_to_laserscan
   PLUGIN "pointcloud_to_laserscan::PointCloudToLaserScanNode"
   EXECUTABLE pointcloud_to_laserscan_node)
