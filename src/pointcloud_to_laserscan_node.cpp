@@ -189,7 +189,7 @@ void PointCloudToLaserScanNode::subscriptionListenerThreadLoop()
       laserscan_pub_->get_intra_process_subscription_count();
     if (subscription_count > 0) {
       if (!sub_.getSubscriber()) {
-        RCLCPP_INFO(
+        RCLCPP_DEBUG(
           this->get_logger(),
           "Got a subscriber to laserscan, starting pointcloud subscriber");
         rclcpp::SensorDataQoS qos;
