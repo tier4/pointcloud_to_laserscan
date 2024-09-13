@@ -62,12 +62,16 @@ namespace pointcloud_to_laserscan
 LaserScanToPointCloudNode::LaserScanToPointCloudNode(const rclcpp::NodeOptions & options)
 : rclcpp::Node("laserscan_to_pointcloud", options)
 {
-  target_frame_ = this->declare_parameter("target_frame", "");
-  tolerance_ = this->declare_parameter("transform_tolerance", 0.01);
+  target_frame_ = this->declare_parameter<std::string>("target_frame");
+  tolerance_ = this->declare_parameter<double>("transform_tolerance");
   // TODO(hidmic): adjust default input queue size based on actual concurrency levels
   // achievable by the associated executor
-  input_queue_size_ = this->declare_parameter(
-    "queue_size", static_cast<int>(std::thread::hardware_concurrency()));
+  input_queue_size_ = this->declare_parameter<int>("queue_size");
+
+  // use all cores if needed 
+  if (input_queue_size_ == QUEUE_SIZE_AUTO) {
+    input_queue_size_ = static_cast<int>(std::thread::hardware_concurrency());
+  }
 
   pub_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("cloud", rclcpp::SensorDataQoS());
 

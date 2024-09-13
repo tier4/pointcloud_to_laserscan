@@ -73,6 +73,9 @@ public:
   ~LaserScanToPointCloudNode() override;
 
 private:
+  static constexpr int QUEUE_SIZE_AUTO = 0;
+  static constexpr double NUM_LIMIT_AUTO = 0.0;
+
   void scanCallback(sensor_msgs::msg::LaserScan::ConstSharedPtr scan_msg);
 
   void subscriptionListenerThreadLoop();
