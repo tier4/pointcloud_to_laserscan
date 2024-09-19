@@ -77,6 +77,8 @@ public:
   ~PointCloudToLaserScanNode() override;
 
 private:
+  static constexpr int QUEUE_SIZE_AUTO_ = 0;
+
   void cloudCallback(PointCloud2::ConstSharedPtr cloud_msg);
 
   void subscriptionListenerThreadLoop();

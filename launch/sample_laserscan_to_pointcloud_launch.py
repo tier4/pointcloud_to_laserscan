@@ -1,13 +1,20 @@
+import os
+
+import yaml
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import ExecuteProcess
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import FindPackageShare, aunchConfiguration
 from launch_ros.actions import Node
-
-import yaml
 
 
 def generate_launch_description():
+    param_file = os.path.join(
+        FindPackageShare('pointcloud_to_laserscan').find('laserscan_to_pointcloud_node'),
+        'param',
+        'laserscan_to_pointcloud.param.yaml'
+    )
+
     return LaunchDescription([
         DeclareLaunchArgument(
             name='scanner', default_value='scanner',
@@ -38,6 +45,6 @@ def generate_launch_description():
             name='laserscan_to_pointcloud',
             remappings=[('scan_in', [LaunchConfiguration(variable_name='scanner'), '/scan']),
                         ('cloud', [LaunchConfiguration(variable_name='scanner'), '/cloud'])],
-            parameters=[{'target_frame': 'scan', 'transform_tolerance': 0.01}]
+            parameters=[param_file]
         ),
     ])

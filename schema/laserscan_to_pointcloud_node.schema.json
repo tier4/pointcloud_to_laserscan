@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Parameters for Laserscan to Pointcloud Node ",
+  "type": "object",
+  "definitions": {
+    "laserscan_to_pointcloud_node": {
+      "type": "object",
+      "properties": {
+        "queue_size": {
+          "description": "Input point cloud queue size",
+          "type": "int",
+          "default": 0
+        },
+        "target_frame": {
+          "description": "If provided, transform the pointcloud into this frame before converting to a laser scan. Otherwise, laser scan will be generated in the same frame as the input point cloud",
+          "type": "string",
+          "default": null
+        },
+        "transform_tolerance": {
+          "description": "Time tolerance for transform lookups. Only used if a target_frame is provided",
+          "type": "number",
+          "default": 0.01
+        }
+      },
+      "required": [
+        "queue_size"
+      ]
+    }
+  },
+  "properties": {
+    "/**": {
+      "type": "object",
+      "properties": {
+        "ros__parameters": {
+          "$ref": "#/definitions/laserscan_to_pointcloud_node"
+        }
+      },
+      "required": ["ros__parameters"]
+    }
+  },
+  "required": ["/**"]
+}

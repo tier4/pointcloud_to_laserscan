@@ -126,22 +126,27 @@ namespace pointcloud_to_laserscan
 PointCloudToLaserScanNode::PointCloudToLaserScanNode(const rclcpp::NodeOptions & options)
 : rclcpp::Node("pointcloud_to_laserscan", options)
 {
-  target_frame_ = this->declare_parameter("target_frame", "");
-  tolerance_ = this->declare_parameter("transform_tolerance", 0.01);
+  target_frame_ = this->declare_parameter<std::string>("target_frame");
+  tolerance_ = this->declare_parameter<double>("transform_tolerance");
   // TODO(hidmic): adjust default input queue size based on actual concurrency levels
   // achievable by the associated executor
-  input_queue_size_ = this->declare_parameter(
-    "queue_size", static_cast<int>(std::thread::hardware_concurrency()));
-  min_height_ = this->declare_parameter("min_height", std::numeric_limits<double>::min());
-  max_height_ = this->declare_parameter("max_height", std::numeric_limits<double>::max());
-  angle_min_ = this->declare_parameter("angle_min", -M_PI);
-  angle_max_ = this->declare_parameter("angle_max", M_PI);
-  angle_increment_ = this->declare_parameter("angle_increment", M_PI / 180.0);
-  scan_time_ = this->declare_parameter("scan_time", 1.0 / 30.0);
-  range_min_ = this->declare_parameter("range_min", 0.0);
-  range_max_ = this->declare_parameter("range_max", std::numeric_limits<double>::max());
-  inf_epsilon_ = this->declare_parameter("inf_epsilon", 1.0);
-  use_inf_ = this->declare_parameter("use_inf", true);
+  input_queue_size_ = this->declare_parameter<int>(
+    "queue_size");
+  min_height_ = this->declare_parameter<double>("min_height");
+  max_height_ = this->declare_parameter<double>("max_height");
+  angle_min_ = this->declare_parameter<double>("angle_min");
+  angle_max_ = this->declare_parameter<double>("angle_max");
+  angle_increment_ = this->declare_parameter<double>("angle_increment");
+  scan_time_ = this->declare_parameter<double>("scan_time");
+  range_min_ = this->declare_parameter<double>("range_min");
+  range_max_ = this->declare_parameter<double>("range_max");
+  inf_epsilon_ = this->declare_parameter<double>("inf_epsilon");
+  use_inf_ = this->declare_parameter<bool>("use_inf");
+
+  // use all cores if needed 
+  if (input_queue_size_ == QUEUE_SIZE_AUTO_) {
+    input_queue_size_ = static_cast<int>(std::thread::hardware_concurrency());
+  }
 
   laserscan_pub_ = this->create_publisher<sensor_msgs::msg::LaserScan>(
     "~/output/laserscan", rclcpp::SensorDataQoS());
